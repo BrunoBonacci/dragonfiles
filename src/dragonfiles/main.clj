@@ -2,7 +2,7 @@
   (:require [dragonfiles.core :as core])
   (:require [clojure.java.io :as io])
   (:require [clojure.tools.cli :refer [parse-opts]])
-  (:require [me.raynes.fs :as fs])
+  (:require [dragonfiles.core-utils :refer :all])
   (:gen-class))
 
 
@@ -16,7 +16,7 @@
 
    ["-p" "--parallel" "Process files in parallel"]
 
-   ["-v" "--version" "Just print version"]
+   ["-v" "--version" "Just print the version"]
 
    ["-h" "--help" "This help"]])
 
@@ -51,10 +51,10 @@
   ([cli error exit]
    (help! (update-in cli [:errors] conj error) exit))
   ([{:keys [options arguments errors summary] :as cli} exit]
-   (println (head))
+   (display (head))
    (doseq [error errors]
-     (println error))
-   (println summary)
+     (display error))
+   (display summary)
    (System/exit exit)))
 
 
@@ -62,7 +62,7 @@
   (let [{:keys [options arguments errors summary] :as cli}
         (parse-opts args cli-options)]
     (cond
-     (:version options)         (println (head))
+     (:version options)         (display (head))
      (:help options)            (help! cli 1)
      errors                     (help! cli 2)
      (nil? (:source options))   (help! cli "MISSING: required param '-s PATH'" 3)

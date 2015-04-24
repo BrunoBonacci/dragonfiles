@@ -1,46 +1,27 @@
 (ns dragonfiles.core
   (:require [clojure.java.io :as io])
   (:require [clojure.string :refer [trim] :as s ])
+  (:require [taoensso.timbre :as log])
   (:require [clojure.tools.cli :refer [parse-opts]])
   (:require [me.raynes.fs :as fs])
+  (:require [dragonfiles.core-utils :refer :all])
+  (:require [dragonfiles.util :refer [safely]])
   (:gen-class))
 
 
+(defn ensure-dirs [file]
+  (fs/mkdirs (.getParentFile (io/file file))))
 
 (defn process-file [source processor output]
-  (print (str "(*) Exporting: " source " -> " output "\n"))
+  (log/debug "Processing: " source " -> " output)
 
-  (try
-    ;; create parent directory if not exists
-    (fs/mkdirs (.getParentFile (io/file output)))
-
-    ;; finally processing file
+  (safely (str "Processing: " source " -> " output)
+    (ensure-dirs output)
+    ;; process the file
     (->> source
          processor
-         ((partial spit output)))
+         (spit output))))
 
-    (catch Exception x
-      (binding [*out* *err*]
-        (print (str "ERROR: processing " source ", reason: " x "\n"))))))
-
-
-
-(defn target-file-name [root file output ext]
-  (let [^String root (.getCanonicalPath (io/file root))
-        ^String file (.getCanonicalPath (io/file file))
-        ^String output (.getCanonicalPath (io/file output))]
-    (-> file
-        (.replaceFirst (str "^\\Q" root "\\E" ) output)
-        (.replaceFirst (str "\\.[^.]*$") (str "." ext))
-        io/file)))
-
-
-(defn build-files-list [source output output-ext]
-  (let [file-list      (filter #(.isFile %) (fs/find-files source #".*"))
-        more-than-one (next file-list)]
-    (if more-than-one
-      (map (juxt identity #(target-file-name source % output output-ext)) file-list)
-      [[(first file-list) (io/file output)]])))
 
 
 (defn process-files [source processor output parallel?]
@@ -79,7 +60,7 @@
 
   (def file "/tmp/one.txt")
 
-  (process-file file (eval (read-string "(comp s/upper-case slurp)")) "/tmp/one.out")
+  (process-file file (processor "(comp frequencies #(s/split % #\" \") s/upper-case slurp)") "/tmp/one.out")
 
 
   )

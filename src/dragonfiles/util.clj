@@ -1,4 +1,5 @@
 (ns dragonfiles.util
+  (:require [taoensso.timbre :as log])
   (:require [cheshire.core :as json]))
 
 
@@ -32,3 +33,11 @@
     nil
     (-> data
         (json/parse-string true))))
+
+
+
+(defmacro safely [message & body]
+  `(try
+     ~@body
+     (catch Exception x#
+       (log/warn x# ~message))))
