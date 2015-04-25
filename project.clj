@@ -1,8 +1,8 @@
 (defproject com.brunobonacci/dragonfiles "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
+  :description "A Clojure scriptable file processor (awk on steroids)"
   :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :license {:name "MIT License"
+            :url "http://opensource.org/licenses/MIT"}
   :javac-options ["-target" "1.7" "-source" "1.7" "-Xlint:-options"]
 
   :dependencies [
