@@ -14,6 +14,12 @@
    ["-o" "--output PATH" "A file or directory which will contains the output files."
     :validate [#(not (.exists (io/file %))) "The file or directory must NOT exist"]]
 
+   ["-i" "--init-script SCRIPT" "a function which is executed before the first file is processed"]
+
+   ["-e" "--end-script SCRIPT" "a function which is executed after the last file is processed, and before the termination."]
+
+   ["-f" "--file-mode" "Rather then processing line-by-line the function expects a file-in file-out"]
+
    ["-p" "--parallel" "Process files in parallel"]
 
    ["-v" "--version" "Just print the version"]
@@ -58,6 +64,26 @@
    (System/exit exit)))
 
 
+(defn- wrap-script [script]
+  (str "(fn [] " script ")"))
+
+(defn main* [script &
+             {:keys [source output parallel file-mode init-script end-script]}]
+  (let [processor (core/processor script)
+        init-script (or (core/processor (wrap-script init-script)) (fn []))
+        end-script  (or (core/processor (wrap-script end-script))  (fn []))]
+
+    ;; initialize process
+    (init-script)
+
+    (core/process-files processor source output
+                        :parallel? parallel
+                        :file-mode? file-mode)
+
+    ;; terminating process
+    (end-script)))
+
+
 (defn -main [& args]
   (let [{:keys [options arguments errors summary] :as cli}
         (parse-opts args cli-options)]
@@ -72,7 +98,7 @@
 
 
      :default
-     (let [{:keys [source output parallel]} options
-           processor (core/processor (first arguments))]
-       (core/process-files source processor output parallel)
-       (shutdown-agents)))))
+     (do
+       (apply main* (first arguments) options)
+       (shutdown-agents)
+       (System/exit 0)))))

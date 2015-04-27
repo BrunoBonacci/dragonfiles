@@ -49,13 +49,14 @@
 
 
 (defn prepare-script [script]
-  (binding [*ns* (create-ns 'user)]
-    ;; requiring standard namespaces
-    (require '[clojure.string :as s :refer [split]])
-    (require '[clojure.java.io :as io])
-    (require '[taoensso.timbre :as log])
-    (require '[dragonfiles.util :refer :all])
-    (eval (read-string script))))
+  (when script
+    (binding [*ns* (create-ns 'user)]
+      ;; requiring standard namespaces
+      (require '[clojure.string :as s :refer [split]])
+      (require '[clojure.java.io :as io])
+      (require '[taoensso.timbre :as log])
+      (require '[dragonfiles.util :refer :all])
+      (eval (read-string script)))))
 
 
 (defn script
