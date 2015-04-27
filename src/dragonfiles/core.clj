@@ -12,23 +12,40 @@
 (defn ensure-dirs [file]
   (fs/mkdirs (.getParentFile (io/file file))))
 
-(defn process-file [source processor output]
-  (log/debug "Processing: " source " -> " output)
+(defn process-file [processor]
+  (fn [source output]
+    (log/debug "Processing: " source " -> " output)
 
-  (safely (str "Processing: " source " -> " output)
-    (ensure-dirs output)
-    ;; process the file
-    (->> source
-         processor
-         (spit output))))
-
+    (safely (str "Processing: " source " -> " output)
+      (ensure-dirs output)
+      ;; process the file
+      (processor source output))))
 
 
-(defn process-files [source processor output parallel?]
-  (let [files (build-files-list source output "txt")
-        mapper (if parallel? #'pmap #'map)]
+(defn line-processor [processor]
+
+  (fn [source output]
+    (with-open [rdr  (io/reader source)
+                wrtr (io/writer output)]
+
+      (doseq [line (line-seq rdr)]
+        (.write wrtr
+                (-> line
+                    processor
+                    (str \newline)))))))
+
+
+
+(defn process-files [processor source output & {:keys [parallel? file-mode?]
+                                                :or {prallel?   false
+                                                     file-mode? false}}]
+  (let [files  (build-files-list source output "txt")
+        mapper (if parallel? #'pmap #'map)
+        prox   (if file-mode?
+                 (process-file processor)
+                 (process-file (line-processor processor)))]
     (doall
-     (mapper (fn [[src out]] (process-file src processor out)) files))))
+     (mapper (fn [[src out]] (prox src out)) files))))
 
 
 (defn prepare-script [script]
@@ -60,7 +77,19 @@
 
   (def file "/tmp/one.txt")
 
-  (process-file file (processor "(comp frequencies #(s/split % #\" \") s/upper-case slurp)") "/tmp/one.out")
+  (process-files
+   (processor "(comp (partial s/join \"\\n\") #(s/split % #\"\\W+\") s/upper-case)")
+   "/tmp/one.txt"
+   "/tmp/one.out")
 
+  (process-files
+   (comp (partial s/join "\n") #(s/split % #"\W+") s/upper-case)
+   "/tmp/one.txt"
+   "/tmp/one.out")
 
+  (process-files
+   (processor "(fn [src out] (->> src slurp ((comp (partial s/join \"\\n\") #(s/split % #\"\\W+\") s/upper-case)) (spit out)))")
+   "/tmp/one.txt"
+   "/tmp/one.out"
+   :file-mode? true)
   )
