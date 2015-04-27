@@ -99,6 +99,6 @@
 
      :default
      (do
-       (apply main* (first arguments) options)
+       (apply main* (first arguments) (mapcat identity options))
        (shutdown-agents)
        (System/exit 0)))))
