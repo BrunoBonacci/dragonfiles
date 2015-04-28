@@ -15,15 +15,15 @@
    ["-o" "--output PATH" "A file or directory which will contains the output files."
     :validate [#(not (.exists (io/file %))) "The file or directory must NOT exist"]]
 
-   ["-i" "--init-script SCRIPT" "a function which is executed before the first file is processed"]
-
-   ["-e" "--end-script SCRIPT" "a function which is executed after the last file is processed, and before the termination."]
+   ["-x" "--extension EXT" "When processing multiple files use this option to change the output file extension."]
 
    ["-f" "--file-mode" "Rather then processing line-by-line the function expects a file-in file-out"]
 
-   ["-x" "--extension EXT" "When processing multiple files use this option to change the output file extension."]
-
    ["-p" "--parallel" "Process files in parallel"]
+
+   ["-i" "--init-script SCRIPT" "a function which is executed before the first file is processed"]
+
+   ["-e" "--end-script SCRIPT" "a function which is executed after the last file is processed, and before the termination."]
 
    ["-q" "--quiet" "Less verbose output"]
 
