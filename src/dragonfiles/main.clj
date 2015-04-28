@@ -63,9 +63,12 @@
    (help! (update-in cli [:errors] conj error) exit))
   ([{:keys [options arguments errors summary] :as cli} exit]
    (display (head))
+   (display "SYNOPSIS\n")
+   (display "       dgf -s PATH -o PATH   SCRIPT\n")
+   (display summary)
    (doseq [error errors]
      (display error))
-   (display summary)
+   (display "")
    (System/exit exit)))
 
 

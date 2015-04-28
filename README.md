@@ -68,6 +68,7 @@ SYNOPSIS
 
        dgf -s PATH -o PATH   SCRIPT   
 
+
   -s, --source PATH         A file or directory containing text file to process
   -o, --output PATH         A file or directory which will contains the output files.
   -x, --extension EXT       When processing multiple files use this option to change the output file extension.
