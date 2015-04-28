@@ -3,6 +3,7 @@
   (:require [clojure.java.io :as io])
   (:require [clojure.tools.cli :refer [parse-opts]])
   (:require [dragonfiles.core-utils :refer :all])
+  (:require [taoensso.timbre :as log])
   (:gen-class))
 
 
@@ -20,7 +21,11 @@
 
    ["-f" "--file-mode" "Rather then processing line-by-line the function expects a file-in file-out"]
 
+   ["-x" "--extension EXT" "When processing multiple files use this option to change the output file extension."]
+
    ["-p" "--parallel" "Process files in parallel"]
+
+   ["-q" "--quiet" "Less verbose output"]
 
    ["-v" "--version" "Just print the version"]
 
@@ -68,7 +73,8 @@
   (str "(fn [] " script ")"))
 
 (defn main* [script &
-             {:keys [source output parallel file-mode init-script end-script]}]
+             {:keys [source output parallel file-mode init-script end-script
+                     extension]}]
   (let [processor (core/processor script)
         init-script (or (core/processor (wrap-script init-script)) (fn []))
         end-script  (or (core/processor (wrap-script end-script))  (fn []))]
@@ -78,7 +84,8 @@
 
     (core/process-files processor source output
                         :parallel? parallel
-                        :file-mode? file-mode)
+                        :file-mode? file-mode
+                        :extension extension)
 
     ;; terminating process
     (end-script)))
@@ -99,6 +106,16 @@
 
      :default
      (do
+       (if (:quiet options)
+         (init-log! :level :warn)
+         (do
+           (init-log! :level :debug)
+           (display (head))))
+
+       (log/trace "OPTIONS:" options)
+
        (apply main* (first arguments) (mapcat identity options))
+
+       (log/trace "Shutting down!!!")
        (shutdown-agents)
        (System/exit 0)))))

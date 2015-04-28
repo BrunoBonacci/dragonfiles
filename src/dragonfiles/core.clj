@@ -36,10 +36,15 @@
 
 
 
-(defn process-files [processor source output & {:keys [parallel? file-mode?]
-                                                :or {prallel?   false
-                                                     file-mode? false}}]
-  (let [files  (build-files-list source output "txt")
+(defn process-files
+  "Given a source directory or file, and an output path,
+  execute the given `processor` on all files and save the output
+  into `output`."
+  [processor source output
+   & {:keys [parallel? file-mode? extension]
+      :or {prallel?   false
+           file-mode? false}}]
+  (let [files  (build-files-list source output extension)
         mapper (if parallel? #'pmap #'map)
         prox   (if file-mode?
                  (process-file processor)
@@ -51,11 +56,12 @@
 (defn prepare-script [script]
   (when script
     (binding [*ns* (create-ns 'user)]
-      ;; requiring standard namespaces
+      ;; requiring common namespaces
       (require '[clojure.string :as s :refer [split]])
       (require '[clojure.java.io :as io])
       (require '[taoensso.timbre :as log])
       (require '[dragonfiles.util :refer :all])
+      ;; execution the user' script
       (eval (read-string script)))))
 
 
@@ -76,6 +82,8 @@
 (comment
   ;; REPL interaction
 
+  (init-log!)
+
   (def file "/tmp/one.txt")
 
   (process-files
@@ -90,7 +98,7 @@
 
   (process-files
    (processor "(fn [src out] (->> src slurp ((comp (partial s/join \"\\n\") #(s/split % #\"\\W+\") s/upper-case)) (spit out)))")
-   "/tmp/one.txt"
-   "/tmp/one.out"
+   "/tmp/dgf"
+   "/tmp/dgf_out"
    :file-mode? true)
   )
