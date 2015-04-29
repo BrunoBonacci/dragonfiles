@@ -27,9 +27,10 @@
    ["-e" "--end-script SCRIPT" "a script which is executed after the last file is processed"]
 
    ["-m" "--module-script SCRIPT" "A script with function definitions to load. (repeatable)"
-        :default []
-        :assoc-fn (fn [m k v] (update-in m [k] conj v))
-   ]
+    :default []
+    :default-desc ""
+    :assoc-fn (fn [m k v] (update-in m [k] conj v))
+    ]
 
    ["-q" "--quiet" "Less verbose output"]
 

@@ -1,4 +1,4 @@
-(defproject com.brunobonacci/dragonfiles "0.1.0-SNAPSHOT"
+(defproject com.brunobonacci/dragonfiles "0.1.0"
   :description "A Clojure scriptable file processor (awk on steroids)"
   :url "http://example.com/FIXME"
   :license {:name "MIT License"
