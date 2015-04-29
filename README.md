@@ -134,7 +134,7 @@ SYNOPSIS
     namespaces, define functions or global var.
 
     SCRIPT can be also a file, in this case the file name need to be
-    prefixed with `@`. For exmaple: `@./myscript.clj
+    prefixed with `@`. For exmaple: `@./myscript.clj`
     
   * `-e, --end-script SCRIPT`
 
@@ -145,7 +145,7 @@ SYNOPSIS
     it out.
 
     SCRIPT can be also a file, in this case the file name need to be
-    prefixed with `@`. For exmaple: `@./myscript.clj
+    prefixed with `@`. For exmaple: `@./myscript.clj`
 
   * `-m, --module-script SCRIPT`
 
@@ -157,7 +157,7 @@ SYNOPSIS
     be loaded and initialised in the order which they are passed.
 
     SCRIPT can be also a file, in this case the file name need to be
-    prefixed with `@`. For exmaple: `@./myscript.clj
+    prefixed with `@`. For exmaple: `@./myscript.clj`
 
   * `-q, --quiet`
   
@@ -181,7 +181,7 @@ SYNOPSIS
     the appropriate format.
     
     SCRIPT can be also a file, in this case the file name need to be
-    prefixed with `@`. For exmaple: `@./myscript.clj
+    prefixed with `@`. For exmaple: `@./myscript.clj`
 
     
 ## Examples
