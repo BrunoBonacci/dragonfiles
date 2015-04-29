@@ -62,7 +62,7 @@
       (require '[taoensso.timbre :as log])
       (require '[dragonfiles.util :refer :all])
       ;; execution the user' script
-      (eval (read-string script)))))
+      (load-string script))))
 
 
 (defn script

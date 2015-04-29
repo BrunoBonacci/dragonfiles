@@ -66,19 +66,20 @@ dgf -s /input/directory -o /output/directory '(comp (partial s/join " ")  #(s/sp
 ```
 SYNOPSIS
 
-       dgf -s PATH -o PATH   SCRIPT   
+       dgf -s PATH -o PATH   SCRIPT
 
 
-  -s, --source PATH         A file or directory containing text file to process
-  -o, --output PATH         A file or directory which will contains the output files.
-  -x, --extension EXT       When processing multiple files use this option to change the output file extension.
-  -f, --file-mode           Rather then processing line-by-line the function expects a file-in file-out
-  -p, --parallel            Process files in parallel
-  -i, --init-script SCRIPT  a function which is executed before the first file is processed
-  -e, --end-script SCRIPT   a function which is executed after the last file is processed, and before the termination.
-  -q, --quiet               Less verbose output
-  -v, --version             Just print the version
-  -h, --help                This help
+  -s, --source PATH               A file or directory containing text file to process
+  -o, --output PATH               A file or directory which will contains the output files.
+  -x, --extension EXT             Use the given extension for output files
+  -f, --file-mode                 Rather than processing line-by-line the function expects a file-in file-out
+  -p, --parallel                  Process files in parallel
+  -i, --init-script SCRIPT        a script which is executed before the first file is processed.
+  -e, --end-script SCRIPT         a script which is executed after the last file is processed
+  -m, --module-script SCRIPT  []  A script with function definitions to load. (repeatable)
+  -q, --quiet                     Less verbose output
+  -v, --version                   Just print the version
+  -h, --help                      This help
 ```
 
 
@@ -128,9 +129,12 @@ SYNOPSIS
     
   * `-i, --init-script SCRIPT`
 
-    `SCRIPT` is a Clojure's expression which is evaluated before the first
-    file is processed. It can be used to `require` additional namespaces,
-    define functions or global var.
+    `SCRIPT` is a Clojure's expression which is evaluated before the
+    first file is processed. It can be used to `require` additional
+    namespaces, define functions or global var.
+
+    SCRIPT can be also a file, in this case the file name need to be
+    prefixed with `@`. For exmaple: `@./myscript.clj
     
   * `-e, --end-script SCRIPT`
 
@@ -139,7 +143,22 @@ SYNOPSIS
     often used in conjunction with `--init-script` but not necessarily.
     It can be used to "summarise" the total of the processing and print
     it out.
-    
+
+    SCRIPT can be also a file, in this case the file name need to be
+    prefixed with `@`. For exmaple: `@./myscript.clj
+
+  * `-m, --module-script SCRIPT`
+
+    A module is a normal Clojure file with other function definition.
+    The purpose of a module if to reuse functions across different
+    projects. Modules are loaded before the init-script, and you can
+    repeat the option as many times as you require in order to load
+    multiple modules (ex: `-m @mod1.clj -m @mod2.clj` etc). Modules will
+    be loaded and initialised in the order which they are passed.
+
+    SCRIPT can be also a file, in this case the file name need to be
+    prefixed with `@`. For exmaple: `@./myscript.clj
+
   * `-q, --quiet`
   
     When this option is specified the information output is reduced
@@ -161,6 +180,9 @@ SYNOPSIS
     `output-file`.  and be responsible for writing the output file in
     the appropriate format.
     
+    SCRIPT can be also a file, in this case the file name need to be
+    prefixed with `@`. For exmaple: `@./myscript.clj
+
     
 ## Examples
 
