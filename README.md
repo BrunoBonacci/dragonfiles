@@ -61,6 +61,14 @@ and you can use everything is available in Clojure.
 dgf -s /input/directory -o /output/directory '(comp (partial s/join " ")  #(s/split % #"\W+") s/upper-case)'
 ```
 
+## Installation
+
+To install simply drop the `dgf` file in your `$PATH`. It requires `java` in the `$PATH` as well.
+
+```bash
+sudo wget "https://github.com/BrunoBonacci/dragonfiles/releases/download/v0.1.0/dgf" -O /usr/local/bin/dgf
+```
+
 ## Usage
 
 ```
