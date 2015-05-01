@@ -5,6 +5,7 @@
   (:require [dragonfiles.core-utils :refer :all])
   (:require [taoensso.timbre :as log])
   (:require [clojure.string :as s])
+  (:require [alembic.still :as al])
   (:gen-class))
 
 
@@ -30,6 +31,12 @@
     :default []
     :default-desc ""
     :assoc-fn (fn [m k v] (update-in m [k] conj v))
+    ]
+
+   ["-L" "--load-library LIBRARY" "A library to load from Maven/Clojars in Leiningen dep. format (repeatable)"
+    :default []
+    :default-desc ""
+    :assoc-fn (fn [m k v] (update-in m [k] conj (read-string v)))
     ]
 
    ["-q" "--quiet" "Less verbose output"]
@@ -95,9 +102,12 @@
 
 (defn main* [script &
              {:keys [source output parallel file-mode init-script end-script
-                     extension module-script]}]
-  (let [;; the first task is to load the modules if present
-        _  (doall (map (comp core/processor expression-or-file) module-script))
+                     extension module-script load-library]}]
+  (let [;; before we start we have to load the external libraries
+        _ (when (seq load-library) (log/info "Loading external libraries, please wait."))
+        _ (al/distill load-library)
+        ;; the first task is to load the modules if present
+        _ (doall (map (comp core/processor expression-or-file) module-script))
         ;; after modules have been initialised, the next step is to load
         ;; the init script
         _ (core/processor (expression-or-file init-script))
