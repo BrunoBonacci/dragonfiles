@@ -1,4 +1,4 @@
-(defproject com.brunobonacci/dragonfiles "0.2.0"
+(defproject com.brunobonacci/dragonfiles "0.2.1"
   :description "A Clojure scriptable file processor (awk on steroids)"
   :url "http://example.com/FIXME"
   :license {:name "MIT License"
@@ -11,7 +11,8 @@
                  [com.taoensso/timbre "3.4.0"]
                  [me.raynes/fs "1.4.6"]
                  [cheshire "5.4.0"]
-                 [alembic "0.3.2"]]
+                 ;;[alembic "0.3.2"]
+                 [com.cemerick/pomegranate "0.3.0"]]
 
   :main dragonfiles.main
 

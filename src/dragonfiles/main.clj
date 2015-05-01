@@ -5,9 +5,16 @@
   (:require [dragonfiles.core-utils :refer :all])
   (:require [taoensso.timbre :as log])
   (:require [clojure.string :as s])
-  (:require [alembic.still :as al])
+  (:require [cemerick.pomegranate :refer [add-dependencies]])
   (:gen-class))
 
+
+(defn load-libraries [libraries]
+  (when (seq libraries)
+    (add-dependencies
+     :coordinates libraries
+     :repositories (merge cemerick.pomegranate.aether/maven-central
+                          {"clojars" "http://clojars.org/repo"}))))
 
 (def cli-options
 
@@ -105,7 +112,7 @@
                      extension module-script load-library]}]
   (let [;; before we start we have to load the external libraries
         _ (when (seq load-library) (log/info "Loading external libraries, please wait."))
-        _ (al/distill load-library)
+        _ (load-libraries load-library)
         ;; the first task is to load the modules if present
         _ (doall (map (comp core/processor expression-or-file) module-script))
         ;; after modules have been initialised, the next step is to load
