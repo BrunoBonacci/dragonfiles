@@ -176,7 +176,7 @@ SYNOPSIS
     that you can use the library in the script. For example, to load a
     CSV library you could add: `-L [clojure-csv/clojure-csv "2.0.1"]`
     and then in your init script require the namespace:
-    `-i \"(require '[clojure-csv.core :refer :all])\"` and finally
+    `-i "(require '[clojure-csv.core :refer :all])"` and finally
     you can parse a csv line `parse-csv`. The option can be repeated
     to load additionally libraries.
 
