@@ -34,7 +34,7 @@ You can think of it as "`awk` on steroids".
 
 ## Description
 
-`dragongiles` is a scriptable file processor where scripts can be written
+`dragonfiles` is a scriptable file processor where scripts can be written
 in Clojure. It is somewhat similar to `awk` although it is not an attempt
 to clone or copy all the `awk` features.
 The idea is that when processing files there is a number of activities
